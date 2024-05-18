@@ -11,40 +11,40 @@ RUN \
     apt-get -qq update \
     && \
     apt-get -qq install -y \
-        gnupg2 \
-        curl \
+    gnupg2 \
+    curl \
     && \
     case "${TARGETPLATFORM}" in \
-        'linux/amd64') \
-            curl -sL https://repositories.intel.com/graphics/intel-graphics.key | apt-key add - \
-            && echo 'deb [arch=amd64] https://repositories.intel.com/graphics/ubuntu jammy main' > /etc/apt/sources.list.d/intel.list \
-            && \
-            export ARCH='amd64'; \
-            export EXTRA_INSTALL_ARG='intel-media-va-driver-non-free nvidia-opencl-icd-340 i965-va-driver mesa-va-drivers'; \
-        ;; \
-        'linux/arm64') \
-            apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6587FFD6536B8826E88A62547876AE518CBCF2F2 \
-            && echo "deb http://ppa.launchpad.net/ubuntu-raspi2/ppa-nightly/ubuntu focal main" | tee /etc/apt/sources.list.d/raspberrypi.list \
-            && \
-            export ARCH='arm64'; \
-            export EXTRA_INSTALL_ARG='libomxil-bellagio0 libomxil-bellagio-bin libraspberrypi0'; \
-            unset NVIDIA_DRIVER_CAPABILITIES; \
-        ;; \
+    'linux/amd64') \
+    curl -sL https://repositories.intel.com/graphics/intel-graphics.key | apt-key add - \
+    && echo 'deb [arch=amd64] https://repositories.intel.com/graphics/ubuntu jammy main' > /etc/apt/sources.list.d/intel.list \
+    && \
+    export ARCH='amd64'; \
+    export EXTRA_INSTALL_ARG='intel-media-va-driver-non-free nvidia-opencl-icd-340 i965-va-driver mesa-va-drivers'; \
+    ;; \
+    'linux/arm64') \
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6587FFD6536B8826E88A62547876AE518CBCF2F2 \
+    && echo "deb http://ppa.launchpad.net/ubuntu-raspi2/ppa-nightly/ubuntu focal main" | tee /etc/apt/sources.list.d/raspberrypi.list \
+    && \
+    export ARCH='arm64'; \
+    export EXTRA_INSTALL_ARG='libomxil-bellagio0 libomxil-bellagio-bin libraspberrypi0'; \
+    unset NVIDIA_DRIVER_CAPABILITIES; \
+    ;; \
     esac \
     && \
     apt-get -qq update \
     && \
     apt-get -qq install -y \
-        ca-certificates \
-        ${EXTRA_INSTALL_ARG} \
+    ca-certificates \
+    ${EXTRA_INSTALL_ARG} \
     && \
     curl -fsSL "https://repo.jellyfin.org/ubuntu/jellyfin_team.gpg.key" | apt-key add - && \
     echo "deb [arch=${ARCH}] https://repo.jellyfin.org/ubuntu jammy main" | tee /etc/apt/sources.list.d/jellyfin.list && \
     apt-get -qq update && \
     apt-get -qq install -y \
-        jellyfin-ffmpeg5 \
-        openssh-server \
-        augeas-tools \
+    jellyfin-ffmpeg6 \
+    openssh-server \
+    augeas-tools \
     && \
     apt-get remove -y gnupg2 curl \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
@@ -52,9 +52,9 @@ RUN \
     && apt-get clean \
     && \
     rm -rf \
-        /tmp/* \
-        /var/lib/apt/lists/* \
-        /var/tmp/ \
+    /tmp/* \
+    /var/lib/apt/lists/* \
+    /var/tmp/ \
     && printf "umask %d\n" "${UMASK}" >> /etc/bash.bashrc
 
 RUN mkdir -p /etc/authorized_keys \
