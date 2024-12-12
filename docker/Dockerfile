@@ -23,7 +23,7 @@ RUN \
         ;; \
         'linux/arm64') \
             apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 6587FFD6536B8826E88A62547876AE518CBCF2F2 \
-            && echo "deb http://ppa.launchpad.net/ubuntu-raspi2/ppa-nightly/ubuntu focal main" | tee /etc/apt/sources.list.d/raspberrypi.list \
+            && echo "deb http://ppa.launchpad.net/ubuntu-raspi2/ppa-nightly/ubuntu jammy main" | tee /etc/apt/sources.list.d/raspberrypi.list \
             && \
             export ARCH='arm64'; \
             export EXTRA_INSTALL_ARG='libomxil-bellagio0 libomxil-bellagio-bin libraspberrypi0'; \
