@@ -36,7 +36,7 @@ RUN \
     esac \
     && \
     sudo mkdir -p /etc/apt/keyrings && \
-    curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/jellyfin.gpg && \
+    curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key | apt-key add - && \
     echo "deb [arch=${ARCH}] https://repo.jellyfin.org/ubuntu jammy main" | tee /etc/apt/sources.list.d/jellyfin.list && \
     apt-get -qq update \
     && \
