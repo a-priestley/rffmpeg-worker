@@ -1,17 +1,43 @@
+ARG VERSION
+FROM public.ecr.aws/docker/library/alpine:3.18 as builder
+ARG VERSION
+ARG TARGETOS
+ARG TARGETARCH
+ARG TARGETVARIANT=""
+ARG TARGETPLATFORM
+ENV GO111MODULE=on \
+    CGO_ENABLED=0 \
+    GOOS=${TARGETOS} \
+    GOARCH=${TARGETARCH} \
+    GOARM=${TARGETVARIANT} \
+    GOPATH=/go
+ENV PATH $GOPATH/bin:$PATH
+#hadolint ignore=DL3018
+RUN \
+    apk add --no-cache go upx \
+    && go install -ldflags="-s -w" github.com/drone/envsubst/cmd/envsubst@latest \
+    && upx /go/bin/envsubst
+
 FROM public.ecr.aws/docker/library/ubuntu:jammy-20221101
 
-ARG TARGETPLATFORM
 ARG VERSION
 ARG CHANNEL
+ARG TARGETPLATFORM
+ENV TARGETPLATFORM=${TARGETPLATFORM:-linux/amd64}
+
+ENV \
+    DEBCONF_NONINTERACTIVE_SEEN=true \
+    DEBIAN_FRONTEND="noninteractive" \
+    APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn \
+    UMASK="0002" \
+    TZ="Etc/UTC"
 
 ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
 
 USER root
 
-
 WORKDIR /app
 
-# hadolint ignore=DL3008,DL3015
 RUN \
     set -eux \
     && echo 'APT::Install-Recommends "false";' >/etc/apt/apt.conf.d/00recommends \
@@ -26,6 +52,7 @@ RUN \
         ca-certificates \
         curl \
         dnsutils \
+        gnupg2 \
         iputils-ping \
         jo \
         jq \
@@ -34,6 +61,7 @@ RUN \
         pv \
         software-properties-common \
         tini \
+        tzdata \
         vim-tiny \
         unrar \
         unzip \
@@ -58,8 +86,6 @@ ENV LANG en_US.UTF-8
 
 RUN \
     apt-get -qq update \
-    && \
-    apt-get -qq install -y \
     && \
     add-apt-repository universe \
     && \
@@ -114,6 +140,7 @@ RUN mkdir -p /etc/authorized_keys \
 
 EXPOSE 22
 
+COPY --from=builder /go/bin/envsubst /usr/local/bin/envsubst
 COPY ./docker/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/sshd_config"]
