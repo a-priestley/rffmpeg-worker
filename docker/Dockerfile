@@ -41,7 +41,7 @@ RUN \
     echo "deb [arch=${ARCH}] https://repo.jellyfin.org/ubuntu jammy main" | tee /etc/apt/sources.list.d/jellyfin.list && \
     apt-get -qq update && \
     apt-get -qq install -y \
-        jellyfin-ffmpeg5 \
+        jellyfin-ffmpeg7 \
         openssh-server \
         augeas-tools \
         libvshadow-utils \
