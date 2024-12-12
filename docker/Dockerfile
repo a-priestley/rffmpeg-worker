@@ -1,4 +1,4 @@
-FROM ghcr.io/rse-ops/ubuntu:22.04
+FROM public.ecr.aws/docker/library/ubuntu:jammy-20221101
 
 ARG TARGETPLATFORM
 ARG VERSION
