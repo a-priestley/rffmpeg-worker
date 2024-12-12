@@ -11,7 +11,7 @@ RUN \
     && \
     apt-get -qq install -y \
         curl \
-        gnupg2 \
+        gnupg \
         software-properties-common \
         ca-certificates \
     && \
