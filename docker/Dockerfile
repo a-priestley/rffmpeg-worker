@@ -34,7 +34,6 @@ RUN \
         pv \
         software-properties-common \
         tini \
-        tzdata \
         vim-tiny \
         unrar \
         unzip \
