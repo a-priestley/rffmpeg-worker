@@ -6,6 +6,8 @@ ARG CHANNEL
 
 ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
 
+USER root
+
 RUN \
     apt-get -qq update \
     && \
@@ -35,7 +37,7 @@ RUN \
         ;; \
     esac \
     && \
-    sudo mkdir -p /etc/apt/keyrings && \
+    mkdir -p /etc/apt/keyrings && \
     curl -fsSL https://repo.jellyfin.org/jellyfin_team.gpg.key | apt-key add - && \
     echo "deb [arch=${ARCH}] https://repo.jellyfin.org/ubuntu jammy main" | tee /etc/apt/sources.list.d/jellyfin.list && \
     apt-get -qq update \
@@ -65,9 +67,6 @@ RUN mkdir -p /etc/authorized_keys \
     && chmod -R 700 /etc/authorized_keys \
     && echo "AuthorizedKeysFile .ssh/authorized_keys /etc/authorized_keys/%u" | tee -a /etc/ssh/sshd_config \
     && cp -a /etc/ssh /etc/ssh.cache
-
-# removing onedr0p's kah user so that the script can make a new one
-RUN userdel kah
 
 EXPOSE 22
 
