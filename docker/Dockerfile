@@ -8,16 +8,61 @@ ENV NVIDIA_DRIVER_CAPABILITIES="compute,video,utility"
 
 USER root
 
+
+WORKDIR /app
+
+# hadolint ignore=DL3008,DL3015
+RUN \
+    set -eux \
+    && echo 'APT::Install-Recommends "false";' >/etc/apt/apt.conf.d/00recommends \
+    && echo 'APT::Install-Suggests "false";' >>/etc/apt/apt.conf.d/00recommends \
+    && echo 'APT::Get::Install-Recommends "false";' >>/etc/apt/apt.conf.d/00recommends \
+    && echo 'APT::Get::Install-Suggests "false";' >>/etc/apt/apt.conf.d/00recommends \
+    && \
+    apt-get -qq update \
+    && \
+    apt-get install -y \
+        bash \
+        ca-certificates \
+        curl \
+        dnsutils \
+        iputils-ping \
+        jo \
+        jq \
+        locales \
+        moreutils \
+        pv \
+        software-properties-common \
+        tini \
+        tzdata \
+        vim-tiny \
+        unrar \
+        unzip \
+        wget \
+    && \
+    localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
+    && ln -s /usr/bin/vim.tiny /usr/local/bin/vi \
+    && ln -s /usr/bin/vim.tiny /usr/local/bin/vim \
+    && ln -s /usr/bin/vim.tiny /usr/local/bin/nano \
+    && ln -s /usr/bin/vim.tiny /usr/local/bin/emacs \
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && \
+    rm -rf \
+        /tmp/* \
+        /var/lib/apt/lists/* \
+        /var/cache/apt/* \
+        /var/tmp/*
+
+ENV LANG en_US.UTF-8
+
 RUN \
     apt-get -qq update \
     && \
     apt-get -qq install -y \
-        curl \
-        gnupg \
-        software-properties-common \
-        ca-certificates \
     && \
-    sudo add-apt-repository universe \
+    add-apt-repository universe \
     && \
     case "${TARGETPLATFORM}" in \
         'linux/amd64') \
